@@ -1,7 +1,9 @@
 "use strict";
 
+var request = require('request');
+
 var settings = require('../settings'),
-    request = require('request');
+    moves = require('../models/moves');
 
 exports.index = function(req, res){
 
@@ -23,9 +25,10 @@ exports.index = function(req, res){
                     res.send(400, body.error);
             }
             else {
-                res.render('index', { // placeholder. this will be more interesting soon
-                    title : 'Move Modulate'
-                })
+                res.redirect('/moves/summary/daily')
+                // res.render('index', { // placeholder. this will be more interesting soon
+                //     title : 'Move Modulate'
+                // })
             }
         });
 
@@ -36,7 +39,7 @@ exports.index = function(req, res){
 
 exports.authorizeMoves = function(req, res){
     res.render('authmoves', {
-        authorizationUrl : 'https://api.moves-app.com/oauth/v1/authorize?response_type=code&client_id=' + settings.movesClientId + '&scope=activity%20location',
+        authorizationUrl : 'https://api.moves-app.com/oauth/v1/authorize?response_type=code&client_id=' + settings.movesClientId + '&scope=activity', //%20location if want location as well
         title : 'Move Modulate'
     })
 };
@@ -65,3 +68,16 @@ exports.requestMovesToken = function(req, res){
         }
     });
 };
+
+
+exports.movesFullDailySummary = function(req, res){
+    moves.fullDailySummary(req.cookies.access_token, function (err, summaryBody){
+        if (err){
+            if (err === 'invalidToken')
+                return res.send(403, 'invalidToken');
+            else
+                return res.send(500, err);
+        }
+        return res.send(200, summaryBody)
+    })
+}

@@ -11,7 +11,8 @@
         "less-middleware": "*",
         "underscore": "1.4.x",
         "async": "0.2.x",
-        "request": "2.x.x"
+        "request": "2.x.x",
+        "moment" : "2.x.x"
     },
     "engines": {
         "node": "0.10.x",
