@@ -79,24 +79,37 @@ moves.fullDailySummary = function(token, callback){
 
         // FOR NOW JUST GET A FEW DAYS IN JUNE
         movesAPIRequest(token, '/user/summary/daily?from=20130601&to=20130621', function (err, activityBody){
-            // sort by date descending. sortedActivityBody[0] should be today
-            var sortedActivityBody = _.sortBy(activityBody, function(ele){ return -parseInt(ele.date)})
+            // sort by date ascending.
+            var sortedActivityBody = _.sortBy(activityBody, function(ele){ return parseInt(ele.date)})
 
-            // reformat activity object
-            var milesMinutesActivity = _.map(sortedActivityBody, function(ele){
-                return {
-                    date : moment(ele.date, 'YYYYMMDD').format('YYYY-MM-DD'),
-                    summary : _.map(ele.summary, function(subSummary){
-                        return {
-                            activity : subSummary.activity,
-                            duration : subSummary.duration/60, // convert to minutes
-                            distance : subSummary.distance/1609.34, // convert to miles
-                            steps    : subSummary.steps
-                        }
-                    })
-                }
+            var dates = _.map(sortedActivityBody, function(ele){
+                return moment(ele.date, 'YYYYMMDD').format('YYYY-MM-DD')
             })
-            callback(err, milesMinutesActivity)
+
+            var walkDistance = _.map(sortedActivityBody, function(ele){
+                    return _.where(ele.summary, {activity : 'wlk'})[0].distance/1609.34
+            })
+
+            var walkDuration = _.map(sortedActivityBody, function(ele){
+                    return _.where(ele.summary, {activity : 'wlk'})[0].duration/60
+            })
+
+            var walkSteps = _.map(sortedActivityBody, function(ele){
+                    return _.where(ele.summary, {activity : 'wlk'})[0].steps
+            })
+
+            var walk = {
+                distance : walkDistance,
+                duration : walkDuration,
+                steps : walkSteps
+            }
+
+            var summary = {
+                dates : dates,
+                walk : walk
+            }
+
+            callback(err, summary)
         })
     })
 }

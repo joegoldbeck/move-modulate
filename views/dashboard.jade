@@ -4,6 +4,7 @@ block content
     script(src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js")
     script(src="/libs/bootstrap/js/bootstrap.min.js")
     script(src="/libs/jqplot/jquery.jqplot.min.js")
+    script(src="/libs/jqplot/plugins/jqplot.dateAxisRenderer.min.js")
     script(src="/libs/underscore-min.js")
     script(src="/javascripts/dashboard.js")
     link(rel="stylesheet", href="/libs/jqplot/jquery.jqplot.css")
@@ -21,5 +22,6 @@ block content
             div.column Tomorrow You Should Walk
             strong
                 div.column.walk-tomorrow
+    div.spacer
     div.row.graph#walk-graph
-    div.row.text-center Graph of walking over last several days
+    div.row.text-center
