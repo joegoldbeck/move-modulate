@@ -70,13 +70,13 @@ exports.requestMovesToken = function(req, res){
 
 
 exports.movesFullDailySummary = function(req, res){
-    moves.fullDailySummary(req.cookies.access_token, function (err, summaryBody){
+    moves.fullDailySummary(req.cookies.access_token, function (err, summary){
         if (err){
             if (err === 'invalidToken')
                 return res.send(403, 'invalidToken');
             else
                 return res.send(500, err);
         }
-        return res.send(200, summaryBody)
+        return res.send(200, summary)
     })
 }

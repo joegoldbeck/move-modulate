@@ -2,7 +2,8 @@
 
 var settings = require('../settings'),
     request = require('request'),
-    moment = require('moment');
+    moment = require('moment'),
+    _ = require('underscore');
 
 var moves = {}
 
@@ -78,7 +79,10 @@ moves.fullDailySummary = function(token, callback){
 
         // FOR NOW JUST GET THE PAST MONTH
         moves.movesAPIRequest(token, '/user/summary/daily?from=20130601&to=20130621', function (err, activityBody){
-            callback(err, activityBody)
+            // sort by date descending. sortedActivityBody[0] should be today
+            var sortedActivityBody = _.sortBy(activityBody, function(ele){ return -parseInt(ele.date)})
+
+            callback(err, sortedActivityBody)
         })
     })
 }

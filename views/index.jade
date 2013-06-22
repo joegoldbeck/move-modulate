@@ -3,8 +3,13 @@ extends layout
 block content
     script(src="/javascripts/index.js")
     h1 Welcome to #{title}
-    p You have properly authenticated your Moves app. There will be interesting stuff here soon.
     div.row.show-grid
-        div.span4.walk-yesterday
-        div.span4.walk-today
-        div.span4.walk-tomorrow
+        div.span4
+            div.column Yesterday
+            div.column.walk-yesterday
+        div.span4
+            div.column Today
+            div.column.walk-today
+        div.span4
+            div.column Tomorrow You Should Walk
+            div.column.walk-tomorrow
