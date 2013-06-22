@@ -25,10 +25,9 @@ exports.index = function(req, res){
                     res.send(400, body.error);
             }
             else {
-                res.redirect('/moves/summary/daily')
-                // res.render('index', { // placeholder. this will be more interesting soon
-                //     title : 'Move Modulate'
-                // })
+                res.render('index', { // placeholder. this will be more interesting soon
+                    title : 'Move Modulate'
+                })
             }
         });
 
