@@ -82,7 +82,20 @@ moves.fullDailySummary = function(token, callback){
             // sort by date descending. sortedActivityBody[0] should be today
             var sortedActivityBody = _.sortBy(activityBody, function(ele){ return -parseInt(ele.date)})
 
-            callback(err, sortedActivityBody)
+            var milesMinutesActivity = _.map(sortedActivityBody, function(ele){
+                return {
+                    date : moment(ele.date, 'YYYYMMDD').format('YYYY-MM-DD'),
+                    summary : _.map(ele.summary, function(subSummary){
+                        return {
+                            activity : subSummary.activity,
+                            duration : subSummary.duration/60, // convert to minutes
+                            distance : subSummary.distance/1609.34, // convert to miles
+                            steps    : subSummary.steps
+                        }
+                    })
+                }
+            })
+            callback(err, milesMinutesActivity)
         })
     })
 }
