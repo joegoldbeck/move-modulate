@@ -1,15 +1,25 @@
 extends layout
 
 block content
+    script(src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js")
+    script(src="/libs/bootstrap/js/bootstrap.min.js")
+    script(src="/libs/jqplot/jquery.jqplot.min.js")
+    script(src="/libs/underscore-min.js")
     script(src="/javascripts/dashboard.js")
+    link(rel="stylesheet", href="/libs/jqplot/jquery.jqplot.css")
     h1 Welcome to your Move Modulate dashboard
-    div.row.show-grid
+    div.row.text-center
         div.span4
             div.column Yesterday
-            div.column.walk-yesterday
+            strong
+                div.column.walk-yesterday
         div.span4
             div.column Today
-            div.column.walk-today
+            strong
+                div.column.walk-today
         div.span4
             div.column Tomorrow You Should Walk
-            div.column.walk-tomorrow
+            strong
+                div.column.walk-tomorrow
+    div.row.graph#walk-graph
+    div.row.text-center Graph of walking over last several days

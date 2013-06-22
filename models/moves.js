@@ -12,7 +12,7 @@ Make an api call to Moves.
 
 Path should include the leading slash
 */
-moves.movesAPIRequest = function (token, path, callback) {
+var movesAPIRequest = function (token, path, callback) {
     var requestOptions = {
         url : settings.movesAPIUrl + path,
         qs : {
@@ -51,7 +51,7 @@ Output is in the following format:
 }
 */
 moves.getProfile = function (token, callback){
-    moves.movesAPIRequest(token, '/user/profile', function (err, profile){
+    movesAPIRequest(token, '/user/profile', function (err, profile){
         callback(err, profile)
     })
 }
@@ -77,11 +77,12 @@ moves.fullDailySummary = function(token, callback){
         if (err)
             return callback(err)
 
-        // FOR NOW JUST GET THE PAST MONTH
-        moves.movesAPIRequest(token, '/user/summary/daily?from=20130601&to=20130621', function (err, activityBody){
+        // FOR NOW JUST GET A FEW DAYS IN JUNE
+        movesAPIRequest(token, '/user/summary/daily?from=20130601&to=20130621', function (err, activityBody){
             // sort by date descending. sortedActivityBody[0] should be today
             var sortedActivityBody = _.sortBy(activityBody, function(ele){ return -parseInt(ele.date)})
 
+            // reformat activity object
             var milesMinutesActivity = _.map(sortedActivityBody, function(ele){
                 return {
                     date : moment(ele.date, 'YYYYMMDD').format('YYYY-MM-DD'),
