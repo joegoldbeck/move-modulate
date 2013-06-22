@@ -9,7 +9,6 @@ $.ajax({
         walkYesterday = data[1].summary[0].distance,
         suggestedWalkTomorrow = (walkToday + walkYesterday)/2*1.02;
 
-
     $('.walk-yesterday').text(roundForDisplay(walkYesterday) + ' mi')
     $('.walk-today').text(roundForDisplay(walkToday) + ' mi')
     $('.walk-tomorrow').text(roundForDisplay(suggestedWalkTomorrow) + ' mi')

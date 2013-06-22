@@ -5,8 +5,16 @@ var request = require('request');
 var settings = require('../settings'),
     moves = require('../models/moves');
 
-exports.index = function(req, res){
+/*
+Homepage '/'
 
+Renders dashboard if authorized
+
+Redirects to authorization if not
+
+*/
+
+exports.index = function(req, res){
     if (req.cookies.access_token) { // if there's an access token
         var requestOptions = {
             url : 'https://api.moves-app.com/oauth/v1/tokeninfo',
@@ -25,9 +33,7 @@ exports.index = function(req, res){
                     res.send(400, body.error);
             }
             else {
-                res.render('index', { // placeholder. this will be more interesting soon
-                    title : 'Move Modulate'
-                })
+                res.render('dashboard'); // render dashboard if authorized
             }
         });
 
