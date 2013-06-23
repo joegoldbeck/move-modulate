@@ -23,7 +23,6 @@ var movesAPIRequest = function (token, path, callback) {
     };
 
     request(requestOptions, function (err, response, body){
-        console.log(err)
         if (response.statusCode === 401)
             callback('invalidToken', body)
         else if (err)
@@ -78,25 +77,41 @@ moves.fullDailySummary = function(token, callback){
         if (err)
             return callback(err)
 
-        // FOR NOW JUST GET A FEW DAYS IN JUNE
-        movesAPIRequest(token, '/user/summary/daily?from=20130601&to=20130621', function (err, activityBody){
-            // sort by date ascending.
-            var sortedActivityBody = _.sortBy(activityBody, function(ele){ return parseInt(ele.date)})
+        async.map(moves.generateDatePairs(firstDate, moment().format('YYYYMMDD'), 31), function (datePair, cb){
+            movesAPIRequest(token, '/user/summary/daily?from='+ datePair[0] + '&to=' + datePair[1], function (err, activityBody){
+                cb(err, activityBody)
+            })
+        }, function(err, results){
+            var fullActivityBody = _.flatten(results, true)
+
+            var sortedActivityBody = _.sortBy(fullActivityBody, function(ele){ return parseInt(ele.date)})
 
             var dates = _.map(sortedActivityBody, function(ele){
                 return moment(ele.date, 'YYYYMMDD').format('YYYY-MM-DD')
             })
 
             var walkDistance = _.map(sortedActivityBody, function(ele){
-                    return _.where(ele.summary, {activity : 'wlk'})[0].distance/1609.34
+                    var walk = _.where(ele.summary, {activity : 'wlk'})[0]
+                    if (walk)
+                        return walk.distance/1609.34
+                    else
+                        return 0
             })
 
             var walkDuration = _.map(sortedActivityBody, function(ele){
-                    return _.where(ele.summary, {activity : 'wlk'})[0].duration/60
+                var walk = _.where(ele.summary, {activity : 'wlk'})[0]
+                if (walk)
+                    return walk.duration/60
+                else
+                    return 0
             })
 
             var walkSteps = _.map(sortedActivityBody, function(ele){
-                    return _.where(ele.summary, {activity : 'wlk'})[0].steps
+                var walk = _.where(ele.summary, {activity : 'wlk'})[0]
+                if (walk)
+                    return walk.steps
+                else
+                    return 0
             })
 
             var walk = {
