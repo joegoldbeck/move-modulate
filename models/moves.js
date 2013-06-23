@@ -3,7 +3,8 @@
 var settings = require('../settings'),
     request = require('request'),
     moment = require('moment'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    async = require('async');
 
 var moves = {}
 
@@ -112,6 +113,37 @@ moves.fullDailySummary = function(token, callback){
             callback(err, summary)
         })
     })
+}
+
+/*
+
+Generate pairs of dates for multiple Moves calls recursively
+
+Input date format can be 'YYYYMMDD' or 'YYYY-MM-DD'
+
+Output is of the form [['YYYY-MM-DD', 'YYYY-MM-DD'], ['YYYY-MM-DD', 'YYYY-MM-DD']]
+
+*/
+
+moves.generateDatePairs = function(startDate, endDate, maxDaysPerPair){
+    // validate inputs
+    if (maxDaysPerPair < 1)
+        return []
+
+    var startMoment = moment(startDate, ['YYYYMMDD', 'YYYY-MM-DD']),
+        endMoment = moment(endDate, ['YYYYMMDD', 'YYYY-MM-DD'])
+
+    if (startMoment > endMoment)
+        return []
+
+    var maxPairEndMoment = startMoment.clone().add('days', maxDaysPerPair - 1) // latest moment the first pair can end
+
+    if (maxPairEndMoment >= endMoment) // if the full date range is small enough to fit into one pair
+        return [[startMoment.format('YYYY-MM-DD'), endMoment.format('YYYY-MM-DD')]]
+    else{
+        var nextPairStartDate = maxPairEndMoment.clone().add('days', 1).format('YYYY-MM-DD')
+        return [[startMoment.format('YYYY-MM-DD'), maxPairEndMoment.format('YYYY-MM-DD')]].concat(moves.generateDatePairs(nextPairStartDate, endDate, maxDaysPerPair))
+    }
 }
 
 module.exports = moves;
