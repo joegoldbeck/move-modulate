@@ -31,7 +31,7 @@ exports.index = function(req, res){
                     res.send(400, body.error);
             }
             else {
-                res.render('dashboard'); // render dashboard if authorized
+                res.render('dashboard', { title : 'Dashboard - Move Modulate'}); // render dashboard if authorized
             }
         })
     }
@@ -50,7 +50,7 @@ If there's a token stored in the environment for demo mode, shows a demo mode bu
 exports.loginScreen = function(req, res){
     res.render('login', {
         authorizationUrl : 'https://api.moves-app.com/oauth/v1/authorize?response_type=code&client_id=' + settings.movesClientId + '&scope=activity', //+'%20location' if want location as well
-        title : 'Move Modulate',
+        title : 'Login - Move Modulate',
         allowDemo : settings.movesToken ? true : false
     })
 }
