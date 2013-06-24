@@ -86,6 +86,9 @@ moves.fullDailySummary = function(token, callback){
 
             var sortedActivityBody = _.sortBy(fullActivityBody, function(ele){ return parseInt(ele.date)})
 
+            if (!sortedActivityBody[sortedActivityBody.length-1].summary) // if the most recent day has no activity
+                sortedActivityBody.pop()                                // this is probably a timezone issue, so remove the last day from array
+
             var dates = _.map(sortedActivityBody, function(ele){
                 return moment(ele.date, 'YYYYMMDD').format('YYYY-MM-DD')
             })
