@@ -28,6 +28,7 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
+app.get('/startdemo', routes.loadDemoUser);
 app.get('/auth/moves', routes.authorizeMoves);
 app.get('/auth/moves/callback', routes.requestMovesToken);
 app.get('/moves/summary/daily', routes.movesFullDailySummary)

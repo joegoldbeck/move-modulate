@@ -29,7 +29,7 @@ exports.index = function(req, res){
 
         request(requestOptions, function (err, response, body){
             if (err || response.statusCode !== 200) {
-                console.log(err);
+                console.log(err + response.statusCode);
                 if (body.error === 'invalid_token')
                     res.redirect('/auth/moves'); // get a new token. in the future, refresh_token should be stored and the token should be refreshed
                 else
@@ -79,6 +79,12 @@ exports.requestMovesToken = function(req, res){
     });
 };
 
+exports.loadDemoUser = function (req, res){
+    if (!settings.movesToken)
+        res.send(200, { redirect : '/' } )//return res.send(500)
+    res.cookie('access_token', settings.movesToken)
+    res.send(200, { redirect : '/' } )
+}
 
 exports.movesFullDailySummary = function(req, res){
     moves.fullDailySummary(req.cookies.access_token, function (err, summary){
