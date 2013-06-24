@@ -50,7 +50,8 @@ exports.index = function(req, res){
 exports.authorizeMoves = function(req, res){
     res.render('authmoves', {
         authorizationUrl : 'https://api.moves-app.com/oauth/v1/authorize?response_type=code&client_id=' + settings.movesClientId + '&scope=activity', //+'%20location' if want location as well
-        title : 'Move Modulate'
+        title : 'Move Modulate',
+        allowDemo : settings.movesToken ? true : false
     })
 };
 

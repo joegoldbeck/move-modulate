@@ -1,6 +1,4 @@
-console.log('script loaded')
-
-$('#demo').click(function(){
+$('.btn.demo').click(function(){
     $.ajax({
         url: '/startdemo',
         success: function(data, status){
