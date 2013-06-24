@@ -20,7 +20,11 @@ $.ajax({
             title: 'Daily walking distance since you signed up for Moves',
             axes: {
                 xaxis: {
-                    renderer : $.jqplot.DateAxisRenderer
+                    renderer : $.jqplot.DateAxisRenderer,
+                    tickOptions : {
+                        formatString : '%d-%b-%Y'
+                    },
+                    min : data.dates[0]
                 },
                 yaxis: {
                     min : 0,
@@ -40,7 +44,7 @@ $.ajax({
              sizeAdjust: 7.5,
              tooltipAxes : 'y',
              useAxesFormatters: false,
-             tooltipFormatString: '%.2f'
+             tooltipFormatString: '%.1f'
            }
         });
 
