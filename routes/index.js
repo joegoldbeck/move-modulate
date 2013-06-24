@@ -16,13 +16,11 @@ Redirects to authorization if not
 
 exports.index = function(req, res){
 
-    var accessToken = req.cookies.access_token ? req.cookies.access_token : settings.movesToken // if authorized, access token will be in cookie, or for demonstration purposes in the environment
-
-    if (accessToken) {
+    if (req.cookies.access_token) {
         var requestOptions = {
             url : 'https://api.moves-app.com/oauth/v1/tokeninfo',
             qs : {
-                access_token : accessToken
+                access_token : req.cookies.access_token
             },
             json : true
         };
@@ -36,9 +34,6 @@ exports.index = function(req, res){
                     res.send(400, body.error);
             }
             else {
-                if (settings.movesToken && !req.cookies.access_token) // if access token is in the environment for demonstration purposes
-                    res.cookie('access_token', accessToken)           // put token in the cookie for this browser session
-
                 res.render('dashboard'); // render dashboard if authorized
             }
         });
@@ -82,9 +77,9 @@ exports.requestMovesToken = function(req, res){
 
 exports.loadDemoUser = function (req, res){
     if (!settings.movesToken)
-        res.send(200, { redirect : '/' } )//return res.send(500)
+        return res.send(500)
     res.cookie('access_token', settings.movesToken)
-    res.send(200, { redirect : '/' } )
+    return res.send(200, { redirect : '/' } )
 }
 
 exports.movesFullDailySummary = function(req, res){
