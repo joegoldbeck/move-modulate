@@ -5,9 +5,13 @@ $.ajax({
     }
 }).done(function(data){
 
+    var desiredWeeklyIncreaseRate = 1.1;
+
     var walkToday = data.walk.distance.slice(-1)[0],
-        walkYesterday = data.walk.distance.slice(-2)[0],
-        suggestedWalkTomorrow = (walkToday + walkYesterday)/2*1.02;
+        walkYesterday = data.walk.distance.slice(-2)[0];
+
+    // suggest walking distance based on average distance centered around a week ago
+    var suggestedWalkTomorrow = data.walk.distance.slice(-10,-3).reduce(function(a,b){ return a + b })/7*desiredWeeklyIncreaseRate; // ignores that curve will be exponential, but resulting overshoot is minimal
 
     $('.walk-yesterday').text(roundForDisplay(walkYesterday) + ' mi');
     $('.walk-today').text(roundForDisplay(walkToday) + ' mi');
