@@ -1,7 +1,7 @@
 MoveModulate v0.5
 ===================
 
-Lightweight web app which uses data from the Moves app (http://moves-app.com/) to display walking (and soon running and biking) amounts and make recommendations for the next couple days.
+Lightweight web app which uses data from the Moves app (http://moves-app.com/) to display a graph of walking (and soon running and biking) since Moves was installed and make recommendations for the next couple days.
 
 To set up an instance, a moves developer account is required (https://dev.moves-app.com)
 * Redirect URI should be http://YOURAPPURL/authmoves/callback
