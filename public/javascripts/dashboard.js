@@ -21,8 +21,6 @@ $.ajax({
 
     var suggestedWalkGraphData = [walkGraphData.slice(-2)[0], [data.dates.slice(-1)[0], suggestedWalkToday], [data.futureDates[0], suggestedWalkTomorrow]]
 
-    console.log(suggestedWalkGraphData)
-
     var walkGraph = $.jqplot('walk-graph',  [walkGraphData, suggestedWalkGraphData],
         {
             title: 'Daily walking distance since you started using Moves',

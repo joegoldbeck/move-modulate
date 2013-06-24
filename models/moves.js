@@ -98,8 +98,6 @@ moves.fullDailySummary = function(token, callback){
             for (var i=0; i < 30; i++)
                 futureDates.push(moment(futureDates.slice(-1)[0]).add('days', 1).format('YYYY-MM-DD'))
 
-            console.log(require('util').inspect(futureDates, true, 10, true))
-
             var walkDistance = _.map(sortedActivityBody, function(ele){
                     var walk = _.where(ele.summary, {activity : 'wlk'})[0]
                     if (walk)
