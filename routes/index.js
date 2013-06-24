@@ -47,7 +47,7 @@ exports.authorizeMoves = function(req, res){
         authorizationUrl : 'https://api.moves-app.com/oauth/v1/authorize?response_type=code&client_id=' + settings.movesClientId + '&scope=activity', //+'%20location' if want location as well
         title : 'Move Modulate',
         allowDemo : settings.movesToken ? true : false
-    })
+    });
 };
 
 exports.requestMovesToken = function(req, res){
@@ -70,6 +70,7 @@ exports.requestMovesToken = function(req, res){
         }
         else {
             res.cookie('access_token', body.access_token, { maxAge : body.expires_in*1000}) // access token stored only in cookie for now
+            res.cookie('refresh_token', body.refresh_token, { maxAge : body.expires_in*1000})
             res.redirect('/');                                                              // redirect to index, with access token now stored in cookie
         }
     });
@@ -77,9 +78,10 @@ exports.requestMovesToken = function(req, res){
 
 exports.loadDemoUser = function (req, res){
     if (!settings.movesToken)
-        return res.send(500)
-    res.cookie('access_token', settings.movesToken)
-    return res.send(200, { redirect : '/' } )
+        return res.send(500);
+    res.clearCookie('refresh_token');
+    res.cookie('access_token', settings.movesToken);
+    return res.send(200, { redirect : '/' } );
 }
 
 exports.movesFullDailySummary = function(req, res){
@@ -90,6 +92,36 @@ exports.movesFullDailySummary = function(req, res){
             else
                 return res.send(500, err);
         }
-        return res.send(200, summary)
-    })
+        return res.send(200, summary);
+    });
 }
+
+exports.logout = function (req, res){
+    res.clearCookie('access_token'); // remove cookie
+
+    // invalidate token if refresh token is available (won't invalidate demo mode token because no refresh token is associated with it)
+    if (req.cookies.refresh_token) {
+        var requestOptions = {
+            url : 'https://api.moves-app.com/oauth/v1/access_token',
+            qs : {
+                grant_type : 'refresh_token',
+                refresh_token : req.cookies.refresh_token,
+                code : req.query.code,
+                client_id : settings.movesClientId,
+                client_secret : settings.movesSecret
+            },
+            json : true
+        };
+
+        request.post(requestOptions, function (err, response, body){
+            if (err || response.statusCode !== 200)
+                console.log(err);
+
+            res.clearCookie('refresh_token');
+            return res.redirect('/')
+        })
+    }
+    else
+        return res.redirect('/')
+}
+
