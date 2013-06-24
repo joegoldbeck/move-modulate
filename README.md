@@ -1,6 +1,11 @@
-MoveModulate
-==============
+MoveModulate v0.5
+===================
 
-Lightweight web app which uses data from the Moves app to recommend walking, running, and biking amounts over the next few days. Requires a environment variables MOVES_SECRET (client secret for oauth with Moves) & COOKIE_SECRET (for signing cookies).
+Lightweight web app which uses data from the Moves app (http://moves-app.com/) to display walking (and soon running and biking) amounts and make recommendations for the next couple days.
 
-Authored by jgoldbeck
+To set up an instance, a moves developer account is required (https://dev.moves-app.com)
+* Redirect URI should be http://YOURAPPURL/authmoves/callback
+* Environment variable MOVES_SECRET should be set to the client secret
+* Environment variable MOVES_CLIENT should be set to the client id
+
+Authored by jgoldbeck. June 2013

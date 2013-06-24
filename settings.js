@@ -4,8 +4,6 @@ var _ = require('underscore');
 
 var settings = {};
 
-settings.cookieSecret = process.env.COOKIE_SECRET;
-
 settings.movesClientId = process.env.MOVES_CLIENT;
 settings.movesSecret = process.env.MOVES_SECRET;
 
