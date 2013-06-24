@@ -15,11 +15,14 @@ Redirects to authorization if not
 */
 
 exports.index = function(req, res){
-    if (req.cookies.access_token) { // if there's an access token
+
+    var accessToken = req.cookies.access_token ? req.cookies.access_token : settings.movesToken // if authorized, access token will be in cookie, or for demonstration purposes in the environment
+
+    if (accessToken) {
         var requestOptions = {
             url : 'https://api.moves-app.com/oauth/v1/tokeninfo',
             qs : {
-                access_token : req.cookies.access_token
+                access_token : accessToken
             },
             json : true
         };
@@ -33,18 +36,20 @@ exports.index = function(req, res){
                     res.send(400, body.error);
             }
             else {
+                if (settings.movesToken && !req.cookies.access_token) // if access token is in the environment for demonstration purposes
+                    res.cookie('access_token', accessToken)           // put token in the cookie for this browser session
+
                 res.render('dashboard'); // render dashboard if authorized
             }
         });
-
     }
-    else
+    else                             // if there is no access token
         res.redirect('/auth/moves'); // get a token
 };
 
 exports.authorizeMoves = function(req, res){
     res.render('authmoves', {
-        authorizationUrl : 'https://api.moves-app.com/oauth/v1/authorize?response_type=code&client_id=' + settings.movesClientId + '&scope=activity', //%20location if want location as well
+        authorizationUrl : 'https://api.moves-app.com/oauth/v1/authorize?response_type=code&client_id=' + settings.movesClientId + '&scope=activity', //+'%20location' if want location as well
         title : 'Move Modulate'
     })
 };
@@ -69,7 +74,7 @@ exports.requestMovesToken = function(req, res){
         }
         else {
             res.cookie('access_token', body.access_token, { maxAge : body.expires_in*1000}) // access token stored only in cookie for now
-            res.redirect('/'); // redirect to index, with access token now stored in cookie
+            res.redirect('/');                                                              // redirect to index, with access token now stored in cookie
         }
     });
 };
