@@ -17,7 +17,7 @@ $.ajax({
 
     var walkGraph = $.jqplot('walk-graph',  [walkGraphData],
         {
-            title: 'Daily walking distance since you signed up for Moves',
+            title: 'Daily walking distance since you started using Moves',
             axes: {
                 xaxis: {
                     renderer : $.jqplot.DateAxisRenderer,

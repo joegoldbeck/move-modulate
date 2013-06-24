@@ -11,7 +11,9 @@ block content
     link(rel="stylesheet", href="/libs/jqplot/jquery.jqplot.css")
     div.row.text-right
             a.btn.btn-default(href="/auth/moves") Switch User
-    h1.text-center Welcome to your Move Modulate dashboard
+    div.row
+        div.span12
+            h1.text-center Welcome to your Move Modulate dashboard
     div.row.text-center
         div.span4
             div.column Yesterday
@@ -26,6 +28,5 @@ block content
             strong
                 div.column.walk-tomorrow
     div.spacer
-    div.row.graph#walk-graph
-    div.row.text-center
+    div.graph#walk-graph
 
