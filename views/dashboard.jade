@@ -8,7 +8,11 @@ block content
     script(src="/libs/underscore-min.js")
     script(src="/javascripts/dashboard.js")
     link(rel="stylesheet", href="/libs/jqplot/jquery.jqplot.css")
-    h1 Welcome to your Move Modulate dashboard
+    div.row
+        div.span10
+        div.span2
+            a.btn.btn-danger(href="/auth/moves") Switch User
+    h1.text-center Welcome to your Move Modulate dashboard
     div.row.text-center
         div.span4
             div.column Yesterday
@@ -25,3 +29,4 @@ block content
     div.spacer
     div.row.graph#walk-graph
     div.row.text-center
+
