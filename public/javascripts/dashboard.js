@@ -17,15 +17,31 @@ $.ajax({
 
     var walkGraph = $.jqplot('walk-graph',  [walkGraphData],
         {
-            title: 'Graph of walking over last several days',
-            axes: {xaxis:{renderer : $.jqplot.DateAxisRenderer}},
+            title: 'Daily walking distance since you signed up for Moves',
+            axes: {
+                xaxis: {
+                    renderer : $.jqplot.DateAxisRenderer
+                },
+                yaxis: {
+                    min : 0,
+                    max : Math.ceil(Math.max.apply(null, data.walk.distance))
+                }
+            },
             series : [{
                 lineWidth : 3,
                 showMarker: false,
                 shadow: false,
                 rendererOptions: {
                   smooth: true
-                }}]
+                }}],
+
+           highlighter: {
+             show: true,
+             sizeAdjust: 7.5,
+             tooltipAxes : 'y',
+             useAxesFormatters: false,
+             tooltipFormatString: '%.2f'
+           }
         });
 
 })
