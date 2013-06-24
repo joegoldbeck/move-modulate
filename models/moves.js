@@ -93,6 +93,13 @@ moves.fullDailySummary = function(token, callback){
                 return moment(ele.date, 'YYYYMMDD').format('YYYY-MM-DD')
             })
 
+            // calculate future dates
+            var futureDates = [moment(dates.slice(-1)[0]).add('days', 1).format('YYYY-MM-DD')]
+            for (var i=0; i < 30; i++)
+                futureDates.push(moment(futureDates.slice(-1)[0]).add('days', 1).format('YYYY-MM-DD'))
+
+            console.log(require('util').inspect(futureDates, true, 10, true))
+
             var walkDistance = _.map(sortedActivityBody, function(ele){
                     var walk = _.where(ele.summary, {activity : 'wlk'})[0]
                     if (walk)
@@ -125,7 +132,8 @@ moves.fullDailySummary = function(token, callback){
 
             var summary = {
                 dates : dates,
-                walk : walk
+                walk : walk,
+                futureDates : futureDates
             }
 
             callback(err, summary)
