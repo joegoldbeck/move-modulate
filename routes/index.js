@@ -35,7 +35,7 @@ exports.index = function(req, res){
             }
         })
     }
-    else                             // if there is no access token
+    else                       // if there is no access token
         res.redirect('/login') // get a token
 }
 
@@ -106,7 +106,7 @@ exports.logout = function (req, res){
 /*
 /auth/moves/callback
 
-Part of the oauth sequence with Moves
+Part of the oauth sequence with Moves. Stores tokens in client cookie
 Moves app authorization redirects here to initiate access token generation
 */
 exports.requestMovesToken = function(req, res){
