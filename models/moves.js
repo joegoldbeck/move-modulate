@@ -174,8 +174,14 @@ moves.parseSummaryBody = function(summaryBody, numFutureDays){
         walk        : walk
     }
 
-    console.log(summary)
     return summary
+}
+
+moves.futureDates = function(today, numDays){
+    var futureDates = [moment(today).add('days', 1).format('YYYY-MM-DD')]
+    for (var i=0; i < numDays; i++)
+        futureDates.push(moment(futureDates.slice(-1)[0]).add('days', 1).format('YYYY-MM-DD'))
+    return futureDates;
 }
 
 /*
@@ -198,7 +204,7 @@ moves.fullDailySummary = function(token, callback){
             var fullSummaryBody = _.flatten(results, true)
 
             // sort by date
-            var sortedSummaryBody = _.sortBy(summaryBody, function(ele){ return parseInt(ele.date) })
+            var sortedSummaryBody = _.sortBy(fullSummaryBody, function(ele){ return parseInt(ele.date) })
 
             // remove possible empty day at end
             if (!sortedSummaryBody[sortedSummaryBody.length-1].summary) // if the most recent day has no activity
@@ -208,10 +214,7 @@ moves.fullDailySummary = function(token, callback){
             var parsedSummaryBody = moves.parseSummaryBody(sortedSummaryBody)
 
             // calculate dates into future
-            var futureDates = [moment(parsedSummaryBody.dates.slice(-1)[0]).add('days', 1).format('YYYY-MM-DD')]
-            for (var i=0; i < 30; i++)
-                futureDates.push(moment(futureDates.slice(-1)[0]).add('days', 1).format('YYYY-MM-DD'))
-            parsedSummaryBody.futureDates = futureDates;
+            parsedSummaryBody.futureDates = moves.futureDates(parsedSummaryBody.dates.slice(-1)[0], 30)
 
             callback(err, parsedSummaryBody)
         })
