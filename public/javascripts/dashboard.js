@@ -5,17 +5,17 @@ $.ajax({
     }
 }).done(function(data){
 
-    var desiredWeeklyIncreaseRate = 1.1;
+    var desiredWeeklyIncreaseRate = 1.1
 
-    var walkToday = data.walk.distance.slice(-1)[0];
+    var walkToday = data.walk.distance.slice(-1)[0]
     // suggest walking distance based on average distance centered around a week ago
-    var suggestedWalkToday = data.walk.distance.slice(-11,-4).reduce(function(a,b){ return a + b })/7*desiredWeeklyIncreaseRate; // ignores that curve will be exponential, but resulting overshoot is minimal
-    var suggestedWalkTomorrow = data.walk.distance.slice(-10,-3).reduce(function(a,b){ return a + b })/7*desiredWeeklyIncreaseRate; // ignores that curve will be exponential, but resulting overshoot is minimal
+    var suggestedWalkToday = data.walk.distance.slice(-11,-4).reduce(function(a,b){ return a + b })/7*desiredWeeklyIncreaseRate // ignores that curve will be exponential, but resulting overshoot is minimal
+    var suggestedWalkTomorrow = data.walk.distance.slice(-10,-3).reduce(function(a,b){ return a + b })/7*desiredWeeklyIncreaseRate // ignores that curve will be exponential, but resulting overshoot is minimal
 
 
-    $('.walked-today').text(roundForDisplay(walkToday) + ' mi');
-    $('.walk-more-today').text(roundForDisplay(Math.max(suggestedWalkToday - walkToday, 0)) + ' mi');
-    $('.walk-tomorrow').text(roundForDisplay(suggestedWalkTomorrow) + ' mi');
+    $('.walked-today').text(roundForDisplay(walkToday) + ' mi')
+    $('.walk-more-today').text(roundForDisplay(Math.max(suggestedWalkToday - walkToday, 0)) + ' mi')
+    $('.walk-tomorrow').text(roundForDisplay(suggestedWalkTomorrow) + ' mi')
 
     var walkGraphData = _.pairs(_.object(data.dates, data.walk.distance))
 
@@ -60,7 +60,7 @@ $.ajax({
              useAxesFormatters: false,
              tooltipFormatString: '%.1f'
            }
-        });
+        })
 
 })
 

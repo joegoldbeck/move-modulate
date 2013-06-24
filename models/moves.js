@@ -4,7 +4,7 @@ var settings = require('../settings'),
     request = require('request'),
     moment = require('moment'),
     _ = require('underscore'),
-    async = require('async');
+    async = require('async')
 
 var moves = {}
 
@@ -20,18 +20,18 @@ var movesAPIRequest = function (token, path, callback) {
             access_token : token
         },
         json : true
-    };
+    }
 
     request(requestOptions, function (err, response, body){
         if (response.statusCode === 401)
             callback('invalidToken', body)
         else if (err)
-            callback(err, body);
+            callback(err, body)
         else if (response.statusCode !== 200)
-            callback('Unexpected response code' + response.statusCode, body);
+            callback('Unexpected response code' + response.statusCode, body)
         else
-            callback(null, body);
-    });
+            callback(null, body)
+    })
 }
 
 
@@ -170,4 +170,4 @@ moves.generateDatePairs = function(startDate, endDate, maxDaysPerPair){
     }
 }
 
-module.exports = moves;
+module.exports = moves

@@ -8,5 +8,5 @@ $('.btn.demo').click(function(){
         xhrFields: {
             withCredentials: true
         }
-    });
-});
+    })
+})

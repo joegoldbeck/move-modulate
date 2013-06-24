@@ -1,7 +1,7 @@
 "use strict";
 
 var assert = require('assert'),
-    _ = require('underscore');
+    _ = require('underscore')
 
 var moves = require('../../models/moves')
 

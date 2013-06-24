@@ -1,16 +1,16 @@
 "use strict";
 
-var request = require('request');
+var request = require('request')
 
 var settings = require('../settings'),
-    moves = require('../models/moves');
+    moves = require('../models/moves')
 
 /*
 Homepage '/'
 
 Renders dashboard if authorized
 
-Redirects to authorization if not
+Redirects to login screen if not
 
 */
 
@@ -23,7 +23,7 @@ exports.index = function(req, res){
                 access_token : req.cookies.access_token
             },
             json : true
-        };
+        }
 
         request(requestOptions, function (err, response, body){
             if (err || response.statusCode !== 200) {
@@ -36,19 +36,19 @@ exports.index = function(req, res){
             else {
                 res.render('dashboard'); // render dashboard if authorized
             }
-        });
+        })
     }
     else                             // if there is no access token
-        res.redirect('/login'); // get a token
-};
+        res.redirect('/login') // get a token
+}
 
 exports.loginScreen = function(req, res){
     res.render('login', {
         authorizationUrl : 'https://api.moves-app.com/oauth/v1/authorize?response_type=code&client_id=' + settings.movesClientId + '&scope=activity', //+'%20location' if want location as well
         title : 'Move Modulate',
         allowDemo : settings.movesToken ? true : false
-    });
-};
+    })
+}
 
 exports.requestMovesToken = function(req, res){
 
@@ -61,7 +61,7 @@ exports.requestMovesToken = function(req, res){
             client_secret : settings.movesSecret
         },
         json : true
-    };
+    }
 
     request.post(requestOptions, function (err, response, body){
         if (err || response.statusCode !== 200) {
@@ -69,35 +69,35 @@ exports.requestMovesToken = function(req, res){
             res.send(400, body.error)
         }
         else {
-            res.cookie('access_token', body.access_token, { maxAge : body.expires_in*1000}) // access token stored only in cookie for now
+            res.cookie('access_token', body.access_token, { maxAge : body.expires_in*1000})   // access token stored only in cookie for now
             res.cookie('refresh_token', body.refresh_token, { maxAge : body.expires_in*1000})
-            res.redirect('/');                                                              // redirect to index, with access token now stored in cookie
+            res.redirect('/') // redirect to index, with access token and refresh token now stored in cookie
         }
-    });
-};
+    })
+}
 
 exports.loginDemoUser = function (req, res){
     if (!settings.movesToken)
-        return res.send(500);
-    res.clearCookie('refresh_token');
-    res.cookie('access_token', settings.movesToken);
-    return res.send(200, { redirect : '/' } );
+        return res.send(500)
+    res.clearCookie('refresh_token')
+    res.cookie('access_token', settings.movesToken)
+    return res.send(200, { redirect : '/' } )
 }
 
 exports.movesFullDailySummary = function(req, res){
     moves.fullDailySummary(req.cookies.access_token, function (err, summary){
         if (err){
             if (err === 'invalidToken')
-                return res.send(403, 'invalidToken');
+                return res.send(403, 'invalidToken')
             else
-                return res.send(500, err);
+                return res.send(500, err)
         }
-        return res.send(200, summary);
+        return res.send(200, summary)
     });
 }
 
 exports.logout = function (req, res){
-    res.clearCookie('access_token'); // remove cookie
+    res.clearCookie('access_token') // remove cookie
 
     // invalidate token if refresh token is available (won't invalidate demo mode token because no refresh token is associated with it)
     if (req.cookies.refresh_token) {
@@ -111,13 +111,13 @@ exports.logout = function (req, res){
                 client_secret : settings.movesSecret
             },
             json : true
-        };
+        }
 
         request.post(requestOptions, function (err, response, body){
             if (err || response.statusCode !== 200)
-                console.log(err);
+                console.log(err)
 
-            res.clearCookie('refresh_token');
+            res.clearCookie('refresh_token')
             return res.redirect('/')
         })
     }

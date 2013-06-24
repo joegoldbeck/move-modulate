@@ -1,15 +1,15 @@
-'use strict';
+"use strict";
 
-var _ = require('underscore');
+var _ = require('underscore')
 
-var settings = {};
+var settings = {}
 
-settings.movesClientId = process.env.MOVES_CLIENT;
-settings.movesSecret = process.env.MOVES_SECRET;
+settings.movesClientId = process.env.MOVES_CLIENT
+settings.movesSecret = process.env.MOVES_SECRET
 
-settings.movesToken = process.env.MOVES_TOKEN; // if a token is in the environment for demonstration purposes
+settings.movesToken = process.env.MOVES_TOKEN // if a token is in the environment for demonstration purposes
 
-settings.movesAPIUrl = 'https://api.moves-app.com/api/v1';
-settings.movesAuthUrl = 'https://api.moves-app.com/oauth/v1';
+settings.movesAPIUrl = 'https://api.moves-app.com/api/v1'
+settings.movesAuthUrl = 'https://api.moves-app.com/oauth/v1'
 
-module.exports = settings;
+module.exports = settings
