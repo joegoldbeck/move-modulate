@@ -116,26 +116,29 @@ Output = {
     bike : {}
 }
 */
-moves.parseSummaryBody = function(summaryBody){
-    // sort by date
-    var sortedSummaryBody = _.sortBy(summaryBody, function(ele){ return parseInt(ele.date) })
+moves.parseSummaryBody = function(summaryBody, numFutureDays){
 
-    // remove possible empty day at end
-    if (!sortedSummaryBody[sortedSummaryBody.length-1].summary) // if the most recent day has no activity
-        sortedSummaryBody.pop()                                  // this is probably a timezone issue, so remove the last day from array
+    if (Object.keys(summaryBody).length === 0)
+        return {
+            dates : [],
+            walk : {
+                distance : [],
+                duration : [],
+                steps    : []
+            }
+        }
+
+    if (!numFutureDays)
+        var numFutureDays = 30
+
 
     // convert dates to more standard format and place into an array
-    var dates = _.map(sortedSummaryBody, function(ele){
+    var dates = _.map(summaryBody, function(ele){
         return moment(ele.date, 'YYYYMMDD').format('YYYY-MM-DD')
     })
 
-    // calculate dates into future
-    var futureDates = [moment(dates.slice(-1)[0]).add('days', 1).format('YYYY-MM-DD')]
-    for (var i=0; i < 30; i++)
-        futureDates.push(moment(futureDates.slice(-1)[0]).add('days', 1).format('YYYY-MM-DD'))
-
     // transform nested activity details into more easily traversible arrays which align with date array
-    var walkDistance = _.map(sortedSummaryBody, function(ele){
+    var walkDistance = _.map(summaryBody, function(ele){
             var walk = _.where(ele.summary, {activity : 'wlk'})[0]
             if (walk)
                 return walk.distance/1609.34
@@ -143,7 +146,7 @@ moves.parseSummaryBody = function(summaryBody){
                 return 0 // replace missing activity field with 0 activity
     })
 
-    var walkDuration = _.map(sortedSummaryBody, function(ele){
+    var walkDuration = _.map(summaryBody, function(ele){
         var walk = _.where(ele.summary, {activity : 'wlk'})[0]
         if (walk)
             return walk.duration/60
@@ -151,7 +154,7 @@ moves.parseSummaryBody = function(summaryBody){
             return 0
     })
 
-    var walkSteps = _.map(sortedSummaryBody, function(ele){
+    var walkSteps = _.map(summaryBody, function(ele){
         var walk = _.where(ele.summary, {activity : 'wlk'})[0]
         if (walk)
             return walk.steps
@@ -168,10 +171,10 @@ moves.parseSummaryBody = function(summaryBody){
 
     var summary = {
         dates       : dates,
-        walk        : walk,
-        futureDates : futureDates
+        walk        : walk
     }
 
+    console.log(summary)
     return summary
 }
 
@@ -194,7 +197,23 @@ moves.fullDailySummary = function(token, callback){
             // concatenate the request bodies
             var fullSummaryBody = _.flatten(results, true)
 
-            callback(err, moves.parseSummaryBody(fullSummaryBody))
+            // sort by date
+            var sortedSummaryBody = _.sortBy(summaryBody, function(ele){ return parseInt(ele.date) })
+
+            // remove possible empty day at end
+            if (!sortedSummaryBody[sortedSummaryBody.length-1].summary) // if the most recent day has no activity
+                sortedSummaryBody.pop()                                  // this is probably a timezone issue, so remove the last day from array
+
+            // parse summary body
+            var parsedSummaryBody = moves.parseSummaryBody(sortedSummaryBody)
+
+            // calculate dates into future
+            var futureDates = [moment(parsedSummaryBody.dates.slice(-1)[0]).add('days', 1).format('YYYY-MM-DD')]
+            for (var i=0; i < 30; i++)
+                futureDates.push(moment(futureDates.slice(-1)[0]).add('days', 1).format('YYYY-MM-DD'))
+            parsedSummaryBody.futureDates = futureDates;
+
+            callback(err, parsedSummaryBody)
         })
     })
 }
