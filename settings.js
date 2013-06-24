@@ -6,7 +6,7 @@ var settings = {};
 
 settings.cookieSecret = process.env.COOKIE_SECRET;
 
-settings.movesClientId = '9uuys57PvQY7G2rFn2uBqPi6uoFabcTT';
+settings.movesClientId = process.env.MOVES_CLIENT;
 settings.movesSecret = process.env.MOVES_SECRET;
 
 settings.movesToken = process.env.MOVES_TOKEN; // if a token is in the environment for demonstration purposes
