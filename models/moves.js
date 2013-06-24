@@ -12,6 +12,8 @@ var moves = {}
 Make an api call to Moves.
 
 Path should include the leading slash
+
+Output is callback(err, body)
 */
 var movesAPIRequest = function (token, path, callback) {
     var requestOptions = {
@@ -38,7 +40,7 @@ var movesAPIRequest = function (token, path, callback) {
 /*
 Get user profile.
 
-Output is in the following format:
+Output (err, profile), where profile is in the following format:
 {
     "userId": 23138311640030064,
     "profile": {
@@ -59,7 +61,7 @@ moves.getProfile = function (token, callback){
 /*
 Get the first date from which there might be data for the user
 
-Output is of the form 'YYYYMMDD'
+Output is (err, date) where date is of the form 'YYYYMMDD'
 */
 moves.getFirstDate = function (token, callback){
     moves.getProfile(token, function (err, profile){
@@ -71,6 +73,22 @@ moves.getFirstDate = function (token, callback){
 
 /*
 Get the full daily summary of moves activity
+
+Output (err, summary) where
+
+summary = {
+    dates : [dates in YYYY-MM-DD format from first Moves day until most recent],
+    walk : {
+        distance : [daily distances in miles],  // aligns with dates
+        duration : [daily duration in minutes], // aligns with dates
+        steps    : [daily steps]                // aligns with dates
+    },
+    futureDates : [dates in YYYY-MM-DD format from next day until 30 days into future]
+
+    *FUTURE ADDITIONS*
+    run : {},
+    bike : {}
+}
 */
 moves.fullDailySummary = function(token, callback){
     moves.getFirstDate(token, function (err, firstDate){
@@ -93,7 +111,6 @@ moves.fullDailySummary = function(token, callback){
                 return moment(ele.date, 'YYYYMMDD').format('YYYY-MM-DD')
             })
 
-            // calculate future dates
             var futureDates = [moment(dates.slice(-1)[0]).add('days', 1).format('YYYY-MM-DD')]
             for (var i=0; i < 30; i++)
                 futureDates.push(moment(futureDates.slice(-1)[0]).add('days', 1).format('YYYY-MM-DD'))
@@ -140,15 +157,12 @@ moves.fullDailySummary = function(token, callback){
 }
 
 /*
-
 Generate pairs of dates for multiple Moves calls recursively
 
 Input date format can be 'YYYYMMDD' or 'YYYY-MM-DD'
 
 Output is of the form [['YYYY-MM-DD', 'YYYY-MM-DD'], ['YYYY-MM-DD', 'YYYY-MM-DD']]
-
 */
-
 moves.generateDatePairs = function(startDate, endDate, maxDaysPerPair){
     // validate inputs
     if (maxDaysPerPair < 1)

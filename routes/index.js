@@ -6,14 +6,11 @@ var settings = require('../settings'),
     moves = require('../models/moves')
 
 /*
-Homepage '/'
+Homepage (/)
 
-Renders dashboard if authorized
-
-Redirects to login screen if not
-
+If authorized, renders dashboard
+Otherwise, redirects to login screen
 */
-
 exports.index = function(req, res){
 
     if (req.cookies.access_token) {
@@ -42,6 +39,14 @@ exports.index = function(req, res){
         res.redirect('/login') // get a token
 }
 
+/*
+/login
+
+Renders login screen
+
+Shows button which forwards user to Moves app authorization
+If there's a token stored in the environment for demo mode, shows a demo mode button
+*/
 exports.loginScreen = function(req, res){
     res.render('login', {
         authorizationUrl : 'https://api.moves-app.com/oauth/v1/authorize?response_type=code&client_id=' + settings.movesClientId + '&scope=activity', //+'%20location' if want location as well
@@ -50,32 +55,11 @@ exports.loginScreen = function(req, res){
     })
 }
 
-exports.requestMovesToken = function(req, res){
+/*
+/login/demouser
 
-    var requestOptions = {
-        url : 'https://api.moves-app.com/oauth/v1/access_token',
-        qs : {
-            grant_type : 'authorization_code',
-            code : req.query.code,
-            client_id : settings.movesClientId,
-            client_secret : settings.movesSecret
-        },
-        json : true
-    }
-
-    request.post(requestOptions, function (err, response, body){
-        if (err || response.statusCode !== 200) {
-            console.log(err)
-            res.send(400, body.error)
-        }
-        else {
-            res.cookie('access_token', body.access_token, { maxAge : body.expires_in*1000})   // access token stored only in cookie for now
-            res.cookie('refresh_token', body.refresh_token, { maxAge : body.expires_in*1000})
-            res.redirect('/') // redirect to index, with access token and refresh token now stored in cookie
-        }
-    })
-}
-
+Sets access_token cookie from the token in the environment for demonstration purposes
+*/
 exports.loginDemoUser = function (req, res){
     if (!settings.movesToken)
         return res.send(500)
@@ -84,18 +68,12 @@ exports.loginDemoUser = function (req, res){
     return res.send(200, { redirect : '/' } )
 }
 
-exports.movesFullDailySummary = function(req, res){
-    moves.fullDailySummary(req.cookies.access_token, function (err, summary){
-        if (err){
-            if (err === 'invalidToken')
-                return res.send(403, 'invalidToken')
-            else
-                return res.send(500, err)
-        }
-        return res.send(200, summary)
-    });
-}
+/*
+/logout
 
+Logout user
+Invalidate access token and clear relevant cookies.
+*/
 exports.logout = function (req, res){
     res.clearCookie('access_token') // remove cookie
 
@@ -123,5 +101,49 @@ exports.logout = function (req, res){
     }
     else
         return res.redirect('/')
+}
+
+/*
+/auth/moves/callback
+
+Part of the oauth sequence with Moves
+Moves app authorization redirects here to initiate access token generation
+*/
+exports.requestMovesToken = function(req, res){
+
+    var requestOptions = {
+        url : 'https://api.moves-app.com/oauth/v1/access_token',
+        qs : {
+            grant_type : 'authorization_code',
+            code : req.query.code,
+            client_id : settings.movesClientId,
+            client_secret : settings.movesSecret
+        },
+        json : true
+    }
+
+    request.post(requestOptions, function (err, response, body){
+        if (err || response.statusCode !== 200) {
+            console.log(err)
+            res.send(400, body.error)
+        }
+        else {
+            res.cookie('access_token', body.access_token, { maxAge : body.expires_in*1000})   // access token stored only in cookie for now
+            res.cookie('refresh_token', body.refresh_token, { maxAge : body.expires_in*1000})
+            res.redirect('/') // redirect to index, with access token and refresh token now stored in cookie
+        }
+    })
+}
+
+exports.movesFullDailySummary = function(req, res){
+    moves.fullDailySummary(req.cookies.access_token, function (err, summary){
+        if (err){
+            if (err === 'invalidToken')
+                return res.send(403, 'invalidToken')
+            else
+                return res.send(500, err)
+        }
+        return res.send(200, summary)
+    });
 }
 
