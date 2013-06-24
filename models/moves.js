@@ -100,27 +100,34 @@ moves.fullDailySummary = function(token, callback){
                 cb(err, activityBody)
             })
         }, function(err, results){
+
+            // concatenate the request bodies
             var fullActivityBody = _.flatten(results, true)
 
-            var sortedActivityBody = _.sortBy(fullActivityBody, function(ele){ return parseInt(ele.date)})
+            // sort by date
+            var sortedActivityBody = _.sortBy(fullActivityBody, function(ele){ return parseInt(ele.date) })
 
+            // remove possible empty day at end
             if (!sortedActivityBody[sortedActivityBody.length-1].summary) // if the most recent day has no activity
-                sortedActivityBody.pop()                                // this is probably a timezone issue, so remove the last day from array
+                sortedActivityBody.pop()                                  // this is probably a timezone issue, so remove the last day from array
 
+            // convert dates to more standard format and place into an array
             var dates = _.map(sortedActivityBody, function(ele){
                 return moment(ele.date, 'YYYYMMDD').format('YYYY-MM-DD')
             })
 
+            // calculate dates into future
             var futureDates = [moment(dates.slice(-1)[0]).add('days', 1).format('YYYY-MM-DD')]
             for (var i=0; i < 30; i++)
                 futureDates.push(moment(futureDates.slice(-1)[0]).add('days', 1).format('YYYY-MM-DD'))
 
+            // transform nested activity details into more easily traversible arrays which align with date array
             var walkDistance = _.map(sortedActivityBody, function(ele){
                     var walk = _.where(ele.summary, {activity : 'wlk'})[0]
                     if (walk)
                         return walk.distance/1609.34
                     else
-                        return 0
+                        return 0 // replace missing activity field with 0 activity
             })
 
             var walkDuration = _.map(sortedActivityBody, function(ele){
@@ -139,15 +146,16 @@ moves.fullDailySummary = function(token, callback){
                     return 0
             })
 
+            // prep output structure
             var walk = {
                 distance : walkDistance,
                 duration : walkDuration,
-                steps : walkSteps
+                steps    : walkSteps
             }
 
             var summary = {
-                dates : dates,
-                walk : walk,
+                dates       : dates,
+                walk        : walk,
                 futureDates : futureDates
             }
 
@@ -177,8 +185,8 @@ moves.generateDatePairs = function(startDate, endDate, maxDaysPerPair){
     var maxPairEndMoment = startMoment.clone().add('days', maxDaysPerPair - 1) // latest moment the first pair can end
 
     if (maxPairEndMoment >= endMoment) // if the full date range is small enough to fit into one pair
-        return [[startMoment.format('YYYY-MM-DD'), endMoment.format('YYYY-MM-DD')]]
-    else{
+        return [[startMoment.format('YYYY-MM-DD'), endMoment.format('YYYY-MM-DD')]] // finish
+    else { // recurse
         var nextPairStartDate = maxPairEndMoment.clone().add('days', 1).format('YYYY-MM-DD')
         return [[startMoment.format('YYYY-MM-DD'), maxPairEndMoment.format('YYYY-MM-DD')]].concat(moves.generateDatePairs(nextPairStartDate, endDate, maxDaysPerPair))
     }

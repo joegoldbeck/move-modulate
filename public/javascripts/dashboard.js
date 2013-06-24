@@ -1,7 +1,7 @@
 $.ajax({
-    url: '/moves/summary/daily',
-    xhrFields: {
-        withCredentials: true
+    url : '/moves/summary/daily',
+    xhrFields : {
+        withCredentials : true
     }
 }).done(function(data){
 
@@ -26,39 +26,39 @@ $.ajax({
             title: 'Daily walking distance since you started using Moves',
             axes: {
                 xaxis: {
-                    renderer : $.jqplot.DateAxisRenderer,
+                    renderer         : $.jqplot.DateAxisRenderer,
                     tickOptions : {
                         formatString : '%d-%b-%Y'
                     },
-                    min : data.dates[0]
+                    min              : data.dates[0]
                 },
-                yaxis: {
+                yaxis : {
                     min : 0,
                     max : Math.ceil(Math.max.apply(null, data.walk.distance))
                 }
             },
             series : [{
-                lineWidth : 3,
-                showMarker: false,
-                shadow: false,
-                rendererOptions: {
-                  smooth: true
-                }},{
-                lineWidth : 3,
-                linePattern : 'dotted',
-                showMarker: false,
-                shadow: false,
-                rendererOptions: {
-                  smooth: true
-                }}
-                ],
-
-           highlighter: {
-             show: true,
-             sizeAdjust: 7.5,
-             tooltipAxes : 'y',
-             useAxesFormatters: false,
-             tooltipFormatString: '%.1f'
+                lineWidth       : 3,
+                showMarker      : false,
+                shadow          : false,
+                rendererOptions : {
+                    smooth : true
+                }
+            },{
+                lineWidth       : 3,
+                linePattern     : 'dotted',
+                showMarker      : false,
+                shadow          : false,
+                rendererOptions : {
+                    smooth : true
+                }
+            }],
+            highlighter: {
+                show                : true,
+                sizeAdjust          : 7.5,
+                tooltipAxes         : 'y',
+                useAxesFormatters   : false,
+                tooltipFormatString : '%.1f'
            }
         })
 
