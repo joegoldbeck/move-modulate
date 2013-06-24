@@ -5,7 +5,7 @@ var assert = require('assert'),
 
 var moves = require('../../models/moves')
 
-describe('generateDatePairs', function (){
+describe('moves.generateDatePairs', function (){
     it('should return [] when max days is less than zero', function (){
         var datePairs = moves.generateDatePairs('20130101', '20130401', -21)
         assert.equal(datePairs.length, 0)
@@ -35,7 +35,7 @@ describe('generateDatePairs', function (){
     })
 })
 
-describe('parseSummaryBody', function () {
+describe('moves.parseSummaryBody', function () {
     it ('should return a parsed body with empty arrays if input is {}', function (){
         assert.deepEqual(moves.parseSummaryBody([]), {  dates: [],
                                                         walk: {
@@ -148,5 +148,14 @@ describe('parseSummaryBody', function () {
 
         assert.deepEqual(moves.parseSummaryBody(body), desiredParsedBody)
     })
+})
 
+describe('moves.futureDates', function(){
+    it ('should return [] if numDays = 0', function (){
+        assert.deepEqual(moves.futureDates('2012-11-01', 0), [])
+    })
+
+    it ('should return the next few days if input is valid', function (){
+        assert.deepEqual(moves.futureDates('2012-11-01', 3), ['2012-11-02','2012-11-03','2012-11-04'])
+    })
 })

@@ -177,9 +177,17 @@ moves.parseSummaryBody = function(summaryBody, numFutureDays){
     return summary
 }
 
+/*
+Return an array of days in the future, based on an input which represents today
+
+Output of the form ['YYYY-MM-DD','YYYY-MM-DD']
+*/
 moves.futureDates = function(today, numDays){
-    var futureDates = [moment(today).add('days', 1).format('YYYY-MM-DD')]
-    for (var i=0; i < numDays; i++)
+    if (numDays == 0)
+        return []
+
+    var futureDates = [moment(today).add('days', 1).format('YYYY-MM-DD')] // first day is tomorrow
+    for (var i=1; i < numDays; i++)
         futureDates.push(moment(futureDates.slice(-1)[0]).add('days', 1).format('YYYY-MM-DD'))
     return futureDates;
 }
