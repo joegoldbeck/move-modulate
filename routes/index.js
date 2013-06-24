@@ -48,8 +48,14 @@ Shows button which forwards user to Moves app authorization
 If there's a token stored in the environment for demo mode, shows a demo mode button
 */
 exports.loginScreen = function(req, res){
+
+    if (req.device.type === 'phone' || req.device.type === 'tablet')
+        var baseAuthUrl = 'moves://app/authorize?'
+    else
+        var baseAuthUrl = 'https://api.moves-app.com/oauth/v1/authorize?response_type=code&'
+
     res.render('login', {
-        authorizationUrl : 'https://api.moves-app.com/oauth/v1/authorize?response_type=code&client_id=' + settings.movesClientId + '&scope=activity', //+'%20location' if want location as well
+        authorizationUrl : baseAuthUrl + 'client_id=' + settings.movesClientId + '&redirect_uri=' + settings.movesRedirectUri + '&scope=activity', //+'%20location' if want location as well
         title : 'Login - Move Modulate',
         allowDemo : settings.movesToken ? true : false
     })
@@ -86,7 +92,8 @@ exports.logout = function (req, res){
                 refresh_token : req.cookies.refresh_token,
                 code : req.query.code,
                 client_id : settings.movesClientId,
-                client_secret : settings.movesSecret
+                client_secret : settings.movesSecret,
+                redirect_uri : settings.movesRedirectUri
             },
             json : true
         }
@@ -117,7 +124,8 @@ exports.requestMovesToken = function(req, res){
             grant_type : 'authorization_code',
             code : req.query.code,
             client_id : settings.movesClientId,
-            client_secret : settings.movesSecret
+            client_secret : settings.movesSecret,
+            redirect_uri : settings.movesRedirectUri
         },
         json : true
     }

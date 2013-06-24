@@ -13,7 +13,8 @@
         "underscore": "1.4.x",
         "async": "0.2.x",
         "request": "2.x.x",
-        "moment" : "2.x.x"
+        "moment" : "2.x.x",
+        "express-device" : "0.3.x"
     },
     "devDependencies": {
         "mocha": "1.11.x"

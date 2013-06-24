@@ -1,9 +1,11 @@
 "use strict";
 
 var express = require('express'),
-    routes = require('./routes'),
     http = require('http'),
     path = require('path'),
+    device = require('express-device')
+
+var routes = require('./routes'),
     settings = require('./settings')
 
 var app = express()
@@ -15,6 +17,7 @@ app.set('view engine', 'jade')
 app.use(express.favicon())
 app.use(express.logger('dev'))
 app.use(express.bodyParser())
+app.use(device.capture())
 app.use(express.methodOverride())
 app.use(express.cookieParser())
 app.use(app.router)
