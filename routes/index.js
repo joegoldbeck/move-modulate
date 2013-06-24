@@ -29,7 +29,7 @@ exports.index = function(req, res){
             if (err || response.statusCode !== 200) {
                 console.log(err + response.statusCode);
                 if (body.error === 'invalid_token')
-                    res.redirect('/auth/moves'); // get a new token. in the future, refresh_token should be stored and the token should be refreshed
+                    res.redirect('/login'); // get a new token. in the future, refresh_token should be stored and the token should be refreshed
                 else
                     res.send(400, body.error);
             }
@@ -39,11 +39,11 @@ exports.index = function(req, res){
         });
     }
     else                             // if there is no access token
-        res.redirect('/auth/moves'); // get a token
+        res.redirect('/login'); // get a token
 };
 
-exports.authorizeMoves = function(req, res){
-    res.render('authmoves', {
+exports.loginScreen = function(req, res){
+    res.render('login', {
         authorizationUrl : 'https://api.moves-app.com/oauth/v1/authorize?response_type=code&client_id=' + settings.movesClientId + '&scope=activity', //+'%20location' if want location as well
         title : 'Move Modulate',
         allowDemo : settings.movesToken ? true : false
@@ -76,7 +76,7 @@ exports.requestMovesToken = function(req, res){
     });
 };
 
-exports.loadDemoUser = function (req, res){
+exports.loginDemoUser = function (req, res){
     if (!settings.movesToken)
         return res.send(500);
     res.clearCookie('refresh_token');
