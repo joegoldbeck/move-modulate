@@ -8,24 +8,25 @@ block content
     script(src="/libs/underscore-min.js")
     script(src="/javascripts/dashboard.js")
     link(rel="stylesheet", href="/libs/jqplot/jquery.jqplot.css")
-    div.row.text-right
-            a.btn.btn-default(href="/logout") Logout
-    div.row
-        div.span12
-            h1.text-center Welcome to your Move Modulate dashboard
-    div.row.text-center
-        div.span4
-            div.column Today You've Walked
-            strong
-                div.column.walked-today
-        div.span4
-            div.column You Should Walk Another
-            strong
-                div.column.walk-more-today
-        div.span4
-            div.column Tomorrow You Should Walk
-            strong
-                div.column.walk-tomorrow
-    div.spacer
-    div.graph#walk-graph
+    div.container-fluid
+        div.row-fluid.text-right
+                a.btn.btn-default(href="/logout") Logout
+        div.row-fluid
+            div.span12
+                h1.text-center Welcome to your Move Modulate dashboard
+        div.row-fluid.text-center
+            div.span4
+                div.column Today You've Walked
+                strong
+                    div.column.walked-today
+            div.span4
+                div.column You Should Walk Another
+                strong
+                    div.column.walk-more-today
+            div.span4
+                div.column Tomorrow You Should Walk
+                strong
+                    div.column.walk-tomorrow
+        div.spacer
+        div.graph#walk-graph
 
