@@ -8,4 +8,10 @@ To set up an instance, a moves developer account is required (https://dev.moves-
 * Environment variable MOVES_SECRET should be set to the client secret
 * Environment variable MOVES_CLIENT should be set to the client id
 
+MoveModulate takes advantage of several open source libraries. Most dependencies are installed via 'npm install'.
+Included in the repo are:
+* [Bootstrap](http://twitter.github.io/bootstrap/)
+* [Flat-UI-free](https://github.com/designmodo/Flat-UI)
+* [jqplot](http://www.jqplot.com/)
+
 Authored by jgoldbeck. June 2013
