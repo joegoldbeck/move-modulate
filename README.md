@@ -5,6 +5,7 @@ Lightweight web app which uses data from the Moves app (http://moves-app.com/) t
 
 To set up an instance, a moves developer account is required (https://dev.moves-app.com)
 * Redirect URI should be http://YOURAPPURL/authmoves/callback
+* Environment variable MOVES_REDIRECT should be set to this same URI
 * Environment variable MOVES_SECRET should be set to the client secret
 * Environment variable MOVES_CLIENT should be set to the client id
 
