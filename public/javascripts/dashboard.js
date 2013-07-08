@@ -29,19 +29,21 @@ $.ajax({
 
         var suggestedWalkGraphData = [walkGraphData.slice(-2)[0], [data.dates.slice(-1)[0], suggestedWalkToday], [data.futureDates[0], suggestedWalkTomorrow]]
 
-        var fullGraphDateRange = data.dates.concat(data.futureDates.slice(0,7))
+        var fullGraphDateRange = data.dates.concat(data.futureDates.slice(0,1))
+
+        var defaultGraphRangeIndices = [-28, -1] // show the last four weeks by default
 
         var walkGraph = $.jqplot('walk-graph',  [walkGraphData, suggestedWalkGraphData],
             {
-                title: 'Daily walking distance since you started using Moves',
+                title: 'Daily walking distance',
                 axes: {
                     xaxis: {
                         renderer         : $.jqplot.DateAxisRenderer,
                         tickOptions : {
                             formatString : '%d-%b-%Y'
                         },
-                        min              : data.dates[0],
-                        max              : fullGraphDateRange.slice(-1)[0]
+                        min              : fullGraphDateRange.slice(defaultGraphRangeIndices[0])[0],
+                        max              : fullGraphDateRange.slice(defaultGraphRangeIndices[1])[0],
                     },
                     yaxis : {
                         min : 0,
@@ -76,19 +78,20 @@ $.ajax({
         $('#date-range-slider').slider({
             range: true,
             min: 0,
-            max: 100,
-            values: [ 0, 100 ],
+            max: fullGraphDateRange.length,
+            values: [fullGraphDateRange.length+defaultGraphRangeIndices[0], fullGraphDateRange.length+defaultGraphRangeIndices[1]],
             slide: function( event, ui ) {
                 walkGraph.replot({
                     axes: {
                         xaxis : {
-                            min : data.dates[ui.values[0]],
-                            max : fullGraphDateRange[Math.ceil(ui.values[1]/100*fullGraphDateRange.length)]
+                            min : fullGraphDateRange[ui.values[0]],
+                            max : fullGraphDateRange[ui.values[1]]
                         }
                     }
                 });
             }
         });
+
         $('.ui-slider').show()
     })
 
