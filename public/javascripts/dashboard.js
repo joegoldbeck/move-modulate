@@ -13,21 +13,33 @@ $.ajax({
 
     $(document).ready( function(){ // ensure document ready
 
-        var desiredWeeklyIncreaseRate = 1.1
+
 
         var walkToday = data.walk.distance.slice(-1)[0]
 
         // suggest walking distance based on average distance centered around a week ago
         var walkAndSuggestedWalk = data.walk.distance.slice(-28,-1) // seed suggested walk with data from the past month except for today
 
+        var suggestWalkingParams = {
+            previousWalking : walkAndSuggestedWalk,
+            weeklyIncreaseRate : 1.1,
+            reboundDown : 0.5,      // how much overwalking carries over to the next day
+            reboundUp : 0.49,       // how much underwalking carries over to the next day. should be strictly less than reboundDown to prevent sustained or exploding oscillations
+            lowerLimit : 0.2,       // lower limit of walking as a fraction of suggested walking before rebound
+            upperOutlierLimit : 1.1 // upper limit of walking as a fraction of the max walking day from the sampled period
+        }
+
         // add suggested walking for today with a minimum of how much have already walked
-        walkAndSuggestedWalk.push(Math.max(walkToday, walkAndSuggestedWalk.slice(-10,-3).reduce(function(a,b){ return a + b })/7*desiredWeeklyIncreaseRate))
+        walkAndSuggestedWalk.push(Math.max(walkToday, suggestWalking(suggestWalkingParams)))
 
         for (var i = 0; i < 14; i++){ // calculate suggested walking for next 14 days
-            walkAndSuggestedWalk.push(walkAndSuggestedWalk.slice(-10,-3).reduce(function(a,b){ return a + b })/7*desiredWeeklyIncreaseRate)
+            suggestWalkingParams.previousWalking = walkAndSuggestedWalk
+            walkAndSuggestedWalk.push(suggestWalking(suggestWalkingParams))
         }
 
         suggestedWalk = walkAndSuggestedWalk.slice(27) // starting from today
+
+        console.log(suggestedWalk)
 
         $('.walked-today').text(roundForDisplay(walkToday) + ' mi')
         $('.walk-more-today').text(roundForDisplay(Math.max(suggestedWalk[0] - walkToday, 0)) + ' mi')
@@ -104,6 +116,10 @@ $.ajax({
     })
 
 })
+
+function suggestWalking(params){
+    return params.previousWalking.slice(-10,-3).reduce(function(a,b){ return a + b })/7*params.weeklyIncreaseRate
+}
 
 function roundForDisplay(num){
     return Math.round(num*10)/10
