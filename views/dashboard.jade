@@ -2,6 +2,7 @@ extends layout
 
 block content
     script(src="/libs/bootstrap/js/bootstrap.min.js")
+    script(src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js")
     script(src="/libs/jqplot/jquery.jqplot.min.js")
     script(src="/libs/jqplot/plugins/jqplot.dateAxisRenderer.min.js")]
     script(src="/libs/jqplot/plugins/jqplot.highlighter.min.js")
@@ -29,4 +30,4 @@ block content
                     div.column.walk-tomorrow
         div.spacer
         div.graph#walk-graph
-
+        div.slider.ui-slider#date-range-slider
