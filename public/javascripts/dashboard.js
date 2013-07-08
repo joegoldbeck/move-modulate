@@ -29,6 +29,8 @@ $.ajax({
 
         var suggestedWalkGraphData = [walkGraphData.slice(-2)[0], [data.dates.slice(-1)[0], suggestedWalkToday], [data.futureDates[0], suggestedWalkTomorrow]]
 
+        var fullGraphDateRange = data.dates.concat(data.futureDates.slice(0,7))
+
         var walkGraph = $.jqplot('walk-graph',  [walkGraphData, suggestedWalkGraphData],
             {
                 title: 'Daily walking distance since you started using Moves',
@@ -38,7 +40,8 @@ $.ajax({
                         tickOptions : {
                             formatString : '%d-%b-%Y'
                         },
-                        min              : data.dates[0]
+                        min              : data.dates[0],
+                        max              : fullGraphDateRange.slice(-1)[0]
                     },
                     yaxis : {
                         min : 0,
@@ -76,7 +79,14 @@ $.ajax({
             max: 100,
             values: [ 0, 100 ],
             slide: function( event, ui ) {
-
+                walkGraph.replot({
+                    axes: {
+                        xaxis : {
+                            min : data.dates[ui.values[0]],
+                            max : fullGraphDateRange[Math.ceil(ui.values[1]/100*fullGraphDateRange.length)]
+                        }
+                    }
+                });
             }
         });
         $('.ui-slider').show()
