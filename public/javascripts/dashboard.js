@@ -13,9 +13,7 @@ $.ajax({
 
     $(document).ready( function(){ // ensure document ready
 
-
-
-        var walkToday = data.walk.distance.slice(-1)[0]
+        var walkedToday = data.walk.distance.slice(-1)[0]
 
         // suggest walking distance based on average distance centered around a week ago
         var walkAndSuggestedWalk = data.walk.distance.slice(-28,-1) // seed suggested walk with data from the past month except for today
@@ -23,14 +21,14 @@ $.ajax({
         var suggestWalkingParams = {
             previousWalking : walkAndSuggestedWalk,
             weeklyIncreaseRate : 1.1,
-            reboundDown : 0.5,      // how much overwalking carries over to the next day
-            reboundUp : 0.49,       // how much underwalking carries over to the next day. should be strictly less than reboundDown to prevent sustained or exploding oscillations
+            reboundDecrease : 0.5,  // how much overwalking carries over to the next day
+            reboundIncrease : 0.5,  // how much underwalking carries over to the next day
             lowerLimit : 0.2,       // lower limit of walking as a fraction of suggested walking before rebound
             upperOutlierLimit : 1.1 // upper limit of walking as a fraction of the max walking day from the sampled period
         }
 
         // add suggested walking for today with a minimum of how much have already walked
-        walkAndSuggestedWalk.push(Math.max(walkToday, suggestWalking(suggestWalkingParams)))
+        walkAndSuggestedWalk.push(Math.max(walkedToday, suggestWalking(suggestWalkingParams)))
 
         for (var i = 0; i < 14; i++){ // calculate suggested walking for next 14 days
             suggestWalkingParams.previousWalking = walkAndSuggestedWalk
@@ -39,10 +37,8 @@ $.ajax({
 
         suggestedWalk = walkAndSuggestedWalk.slice(27) // starting from today
 
-        console.log(suggestedWalk)
-
-        $('.walked-today').text(roundForDisplay(walkToday) + ' mi')
-        $('.walk-more-today').text(roundForDisplay(Math.max(suggestedWalk[0] - walkToday, 0)) + ' mi')
+        $('.walked-today').text(roundForDisplay(walkedToday) + ' mi')
+        $('.walk-more-today').text(roundForDisplay(Math.max(suggestedWalk[0] - walkedToday, 0)) + ' mi')
         $('.walk-tomorrow').text(roundForDisplay(suggestedWalk[1]) + ' mi')
 
         var walkGraphData = _.pairs(_.object(data.dates, data.walk.distance))
@@ -118,7 +114,16 @@ $.ajax({
 })
 
 function suggestWalking(params){
-    return params.previousWalking.slice(-10,-3).reduce(function(a,b){ return a + b })/7*params.weeklyIncreaseRate
+    var walkTodayBasic = params.previousWalking.slice(-10,-3).reduce(function(a,b){ return a + b })/7*params.weeklyIncreaseRate
+    var walkPreviousDayBasicSuggest = params.previousWalking.slice(-11,-4).reduce(function(a,b){ return a + b })/7*params.weeklyIncreaseRate
+    var yesterdayMismatch = params.previousWalking.slice(-1)[0] - walkPreviousDayBasicSuggest // positive means walked too far
+
+    var reboundFactor = (yesterdayMismatch >= 0) ? params.reboundDecrease : params.reboundIncrease
+
+    var walkTodayWithRebound = walkTodayBasic - yesterdayMismatch * reboundFactor
+    var walkTodayWithReboundAndLimits = Math.min(Math.max(walkTodayWithRebound, walkTodayBasic * params.lowerLimit), params.upperOutlierLimit * Math.max.apply(Math, params.previousWalking.slice(-10,-3)))
+
+    return walkTodayWithReboundAndLimits
 }
 
 function roundForDisplay(num){
