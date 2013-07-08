@@ -16,20 +16,28 @@ $.ajax({
         var desiredWeeklyIncreaseRate = 1.1
 
         var walkToday = data.walk.distance.slice(-1)[0]
-        // suggest walking distance based on average distance centered around a week ago
-        var suggestedWalkToday = data.walk.distance.slice(-11,-4).reduce(function(a,b){ return a + b })/7*desiredWeeklyIncreaseRate // ignores that curve will be exponential, but resulting overshoot is minimal
-        var suggestedWalkTomorrow = data.walk.distance.slice(-10,-3).reduce(function(a,b){ return a + b })/7*desiredWeeklyIncreaseRate // ignores that curve will be exponential, but resulting overshoot is minimal
 
+        // suggest walking distance based on average distance centered around a week ago
+        var walkAndSuggestedWalk = data.walk.distance.slice(-28,-1) // seed suggested walk with data from the past month except for today
+
+        // add suggested walking for today with a minimum of how much have already walked
+        walkAndSuggestedWalk.push(Math.max(walkToday, walkAndSuggestedWalk.slice(-10,-3).reduce(function(a,b){ return a + b })/7*desiredWeeklyIncreaseRate))
+
+        for (var i = 0; i < 14; i++){ // calculate suggested walking for next 14 days
+            walkAndSuggestedWalk.push(walkAndSuggestedWalk.slice(-10,-3).reduce(function(a,b){ return a + b })/7*desiredWeeklyIncreaseRate)
+        }
+
+        suggestedWalk = walkAndSuggestedWalk.slice(27) // starting from today
 
         $('.walked-today').text(roundForDisplay(walkToday) + ' mi')
-        $('.walk-more-today').text(roundForDisplay(Math.max(suggestedWalkToday - walkToday, 0)) + ' mi')
-        $('.walk-tomorrow').text(roundForDisplay(suggestedWalkTomorrow) + ' mi')
+        $('.walk-more-today').text(roundForDisplay(Math.max(suggestedWalk[0] - walkToday, 0)) + ' mi')
+        $('.walk-tomorrow').text(roundForDisplay(suggestedWalk[1]) + ' mi')
 
         var walkGraphData = _.pairs(_.object(data.dates, data.walk.distance))
 
-        var suggestedWalkGraphData = [walkGraphData.slice(-2)[0], [data.dates.slice(-1)[0], suggestedWalkToday], [data.futureDates[0], suggestedWalkTomorrow]]
+        var suggestedWalkGraphData = [[data.dates.slice(-1)[0], suggestedWalk[0]], [data.futureDates[0], suggestedWalk[1]], [data.futureDates[1], suggestedWalk[2]]]
 
-        var fullGraphDateRange = data.dates.concat(data.futureDates.slice(0,1))
+        var fullGraphDateRange = data.dates.concat(data.futureDates.slice(0,2))
 
         var defaultGraphRangeIndices = [-28, -1] // show the last four weeks by default
 
@@ -59,8 +67,8 @@ $.ajax({
                     }
                 },{
                     lineWidth       : 3,
-                    linePattern     : [.01, 1.1],
-                    showMarker      : false,
+                    linePattern     : 'dotted',
+                    showMarker      : true,
                     shadow          : false,
                     rendererOptions : {
                         smooth : true
