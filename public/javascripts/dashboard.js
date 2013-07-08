@@ -57,7 +57,7 @@ $.ajax({
                     }
                 },{
                     lineWidth       : 3,
-                    linePattern     : 'dotted',
+                    linePattern     : [.01, 1.1],
                     showMarker      : false,
                     shadow          : false,
                     rendererOptions : {
